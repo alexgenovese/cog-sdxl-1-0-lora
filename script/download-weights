@@ -16,19 +16,19 @@ from diffusers import (
 from transformers import CLIPTextModel, CLIPTokenizer
 
 
-cache_dir = "stable-diffusion-v1-5-cache"
-vae_cache_dir = "sd-vae-ft-mse-cache"
+cache_dir = "sdxl-v1-0-cache"
+vae_cache_dir = "sdxl-vae"
 os.makedirs(cache_dir, exist_ok=True)
 os.makedirs(vae_cache_dir, exist_ok=True)
 
 pipe = StableDiffusionPipeline.from_pretrained(
-    "runwayml/stable-diffusion-v1-5",
+    "stabilityai/stable-diffusion-xl-base-1.0",
 )
 
 pipe.save_pretrained(cache_dir)
 
 
 pretrained_vae = AutoencoderKL.from_pretrained(
-    "stabilityai/sd-vae-ft-mse", subfolder=None, revision=None
+    "stabilityai/sdxl-vae", subfolder=None, revision=None
 )
 pretrained_vae.save_pretrained(vae_cache_dir)
