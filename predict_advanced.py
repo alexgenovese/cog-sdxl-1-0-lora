@@ -1,11 +1,9 @@
 import gc
+import os
 import torch
 from cog import BasePredictor, Input, Path
 from lora_diffusion.cli_lora_pti import train as lora_train
-from lora_diffusion import (
-    UNET_DEFAULT_TARGET_REPLACE,
-    TEXT_ENCODER_DEFAULT_TARGET_REPLACE,
-)
+from lora_diffusion import ( UNET_DEFAULT_TARGET_REPLACE, TEXT_ENCODER_DEFAULT_TARGET_REPLACE )
 
 from common import (
     random_seed,
@@ -14,6 +12,13 @@ from common import (
     get_output_filename,
 )
 
+# Defining static variables
+# MODEL_ID is a HF model 
+# VAE_ID is the relative VAE
+MODEL_ID = "stabilityai/stable-diffusion-xl-base-1.0"
+MODEL_CACHE_NAME = "sdxl_cache"
+VAE_ID = "stabilityai/sdxl-vae"
+VAE_CACHE_NAME = "sdxl_vae_cache"
 
 class Predictor(BasePredictor):
     def predict(
@@ -25,7 +30,7 @@ class Predictor(BasePredictor):
         resolution: int = Input(
             description="The resolution for input images. All the images in the train/validation dataset will be resized to this"
             " resolution.",
-            default=512,
+            default=1024,
         ),
         train_text_encoder: bool = Input(
             description="Whether to train the text encoder",
@@ -173,7 +178,7 @@ class Predictor(BasePredictor):
         cog_instance_data = "cog_instance_data"
         cog_class_data = "cog_class_data"
         cog_output_dir = "checkpoints"
-        clean_directories([cog_instance_data, cog_output_dir, cog_class_data])
+        clean_directories([cog_instance_data, cog_output_dir, cog_class_data, MODEL_CACHE_NAME, VAE_CACHE_NAME])
 
         extract_zip_and_flatten(instance_data, cog_instance_data)
 
@@ -182,8 +187,8 @@ class Predictor(BasePredictor):
 
         # some settings are fixed for the replicate model
         lora_train(
-            pretrained_model_name_or_path="./sdxl-v1-0-cache",
-            pretrained_vae_name_or_path=None,
+            pretrained_model_name_or_path=os.path.join(".", MODEL_CACHE_NAME, MODEL_ID),
+            pretrained_vae_name_or_path=os.path.join(".", VAE_CACHE_NAME, VAE_ID),
             revision=None,
             instance_data_dir=cog_instance_data,
             seed=seed,

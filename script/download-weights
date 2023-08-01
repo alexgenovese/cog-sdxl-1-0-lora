@@ -1,34 +1,19 @@
 #!/usr/bin/env python
 
-
 import os
 import sys
 import torch
-from diffusers import StableDiffusionPipeline
-from diffusers import (
-    AutoencoderKL,
-    DDIMScheduler,
-    DDPMScheduler,
-    StableDiffusionPipeline,
-    UNet2DConditionModel,
-)
-
-from transformers import CLIPTextModel, CLIPTokenizer
+from diffusers import ( AutoencoderKL, StableDiffusionPipeline, DiffusionPipeline )
+from predict_advanced import MODEL_ID, VAE_ID, MODEL_CACHE_NAME, VAE_CACHE_NAME
 
 
-cache_dir = "sdxl-v1-0-cache"
-vae_cache_dir = "sdxl-vae"
-os.makedirs(cache_dir, exist_ok=True)
-os.makedirs(vae_cache_dir, exist_ok=True)
+os.makedirs(MODEL_CACHE_NAME, exist_ok=False)
+os.makedirs(VAE_CACHE_NAME, exist_ok=False)
 
-pipe = StableDiffusionPipeline.from_pretrained(
-    "stabilityai/stable-diffusion-xl-base-1.0",
-)
-
-pipe.save_pretrained(cache_dir)
+# pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0")
+pipe = DiffusionPipeline.from_pretrained(MODEL_ID, torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
+pipe.save_pretrained(MODEL_CACHE_NAME)
 
 
-pretrained_vae = AutoencoderKL.from_pretrained(
-    "stabilityai/sdxl-vae", subfolder=None, revision=None
-)
-pretrained_vae.save_pretrained(vae_cache_dir)
+pretrained_vae = AutoencoderKL.from_pretrained(VAE_ID, subfolder=None, revision=None)
+pretrained_vae.save_pretrained(VAE_CACHE_NAME)
