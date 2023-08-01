@@ -6,5 +6,3 @@ __pycache__
 checkpoints
 .cog
 *.safetensors
-output.zip
-cog.yaml
