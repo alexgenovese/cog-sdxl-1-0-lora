@@ -1,5 +1,4 @@
 import gc
-import os
 import torch
 from cog import BasePredictor, Input, Path
 from lora_diffusion.cli_lora_pti import train as lora_train
@@ -187,8 +186,8 @@ class Predictor(BasePredictor):
 
         # some settings are fixed for the replicate model
         lora_train(
-            pretrained_model_name_or_path=os.path.join(".", MODEL_CACHE_NAME, MODEL_ID),
-            pretrained_vae_name_or_path=os.path.join(".", VAE_CACHE_NAME, VAE_ID),
+            pretrained_model_name_or_path=MODEL_ID,
+            pretrained_vae_name_or_path=VAE_ID,
             revision=None,
             instance_data_dir=cog_instance_data,
             seed=seed,
