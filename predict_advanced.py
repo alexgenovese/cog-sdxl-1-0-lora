@@ -88,7 +88,7 @@ class Predictor(BasePredictor):
             description="The tokens to use for the initializer. If not provided, will randomly initialize from gaussian N(0,0.017^2)",
         ),
         learning_rate_text: float = Input(
-            default=1e-5,
+            default=4e-5,
             description="The learning rate for the text encoder.",
         ),
         learning_rate_ti: float = Input(
